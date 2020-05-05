@@ -1,0 +1,3 @@
+## MOI DIPLOM
+# xDD
+## NADEYUS BUDET KRUTO!)!)!)

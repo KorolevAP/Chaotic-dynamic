@@ -53,24 +53,10 @@ namespace chaos
             var map = createBiffurcationMap();
             
             Queue<double> que = new Queue<double>(10);
-            string x0_end = textBox_startingPoint.Text;
-            string[] final_type = new string[] { "Tent map", "Logistic map", "Sin map" };
-            string[] names = new string[] { "Tent's orbits", "Logistic's orbits", "Sin's orbits" };
-            string[] coeff = new string[] { rb_IsTent.Text, rb_IsLog.Text, rb_IsSin.Text };
             double x_0 = Convert.ToDouble(textBox_startingPoint.Text);
-            double coef = Convert.ToDouble(this.textBox_coeff.Text);
             double N_max = Convert.ToDouble(textBox_maxIter.Text);
-
-            int flag;
-            
             setAxis();
-
-            que.Enqueue(x_0);
-            flag = 0;
-            if (rb_IsTent.Checked) flag = 1;
-            if (rb_IsLog.Checked) flag = 2;
-            if (rb_IsSin.Checked) flag = 3;
-            
+            que.Enqueue(x_0);    
             double x = 0; double h = 1.0 / 40;
             for (int j = 0; j < 40; j++)
             {
@@ -78,9 +64,9 @@ namespace chaos
                 x += h;
             }
             chart_orbits.Series[0].Name = "F(x)";
-            chart_orbits.Series[2].Name = names[flag - 1];
+            chart_orbits.Series[2].Name = map.mapName;
 
-            string s1 = "Рассматривали " + final_type[flag - 1] + $" при x_0 = {x_0}, k = {coef}  ";
+            string s1 = $"Рассматривали {map.mapName} при x_0 = {x_0}, k = {map.coefficient}  ";
             chart_orbits.Series[1].Points.AddXY(0, 0);
             chart_orbits.Series[1].Points.AddXY(1, 1);
             
@@ -91,7 +77,7 @@ namespace chaos
             for (; i < N_max && x_0 != 0; i++)
             {
                 if (IsFixed == true) break;
-                double x_1 = next_x.next(flag, coef, x_0);
+                double x_1 = map.nextPoint(x_0);
                 chart_orbits.Series[2].Points.AddXY(x_0, x_1);
                 chart_orbits.Series[2].Points.AddXY(x_1, x_1);
                 dataGridView_orbitsTable.Rows.Add(i, x_1);
