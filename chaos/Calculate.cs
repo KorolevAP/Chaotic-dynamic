@@ -48,8 +48,6 @@ namespace chaos
             mapName = value;
         }
         public abstract double nextPoint(double point);
-
-  
     }
 
     public class TentMap : BiffurcationMap
