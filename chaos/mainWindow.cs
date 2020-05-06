@@ -11,13 +11,19 @@ using System.Windows.Forms;
 namespace chaos
 {
 
-
+    public struct InputParams
+    {
+        public int itersNum { set; get; }
+        public double startingPoint { set; get; }
+    }
     public partial class MainWindow : Form
     {
         public MainWindow()
         {
             InitializeComponent();
         }
+
+        private InputParams inputParams;
         private BiffurcationMap createBiffurcationMap()
         {
             BiffurcationMap map;
@@ -48,22 +54,29 @@ namespace chaos
             chart_orbits.ChartAreas[0].AxisX.Minimum = -0.05;
             chart_orbits.ChartAreas[0].AxisX.Maximum = 1.05;
         }
+        void setInputParams()
+        {
+            inputParams.startingPoint = Convert.ToDouble(textBox_startingPoint.Text);
+            inputParams.itersNum =  Convert.ToInt32(textBox_maxIter.Text);
+        }
         private void button1_Click(object sender, EventArgs e)
         {
+            setInputParams();
+            setAxis();
             var map = createBiffurcationMap();
             
             Queue<double> que = new Queue<double>(10);
             double x_0 = Convert.ToDouble(textBox_startingPoint.Text);
-            double N_max = Convert.ToDouble(textBox_maxIter.Text);
-            setAxis();
+            
+            
             que.Enqueue(x_0);    
-            double x = 0; double h = 1.0 / 40;
+            double x = 0;
+            double h = 1.0 / 40;
             for (int j = 0; j < 40; j++)
             {
                 chart_orbits.Series[0].Points.AddXY(x, map.nextPoint(x));
                 x += h;
             }
-            chart_orbits.Series[0].Name = "F(x)";
             chart_orbits.Series[2].Name = map.mapName;
 
             string s1 = $"Рассматривали {map.mapName} при x_0 = {x_0}, k = {map.coefficient}  ";
@@ -74,7 +87,7 @@ namespace chaos
             bool IsFixed = false;
             chart_orbits.Series[2].Color = Color.Red;
             int i = 1;
-            for (; i < N_max && x_0 != 0; i++)
+            for (; i < inputParams.itersNum && x_0 != 0; i++)
             {
                 if (IsFixed == true) break;
                 double x_1 = map.nextPoint(x_0);
