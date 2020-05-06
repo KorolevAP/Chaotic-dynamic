@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace chaos
 {
@@ -43,7 +44,20 @@ namespace chaos
             return map;
         }
 
-        private void setAxis()
+        delegate double funcWrapper(double point);
+        private void drowDefaultGraphics(funcWrapper func)
+        {
+            double x = 0;
+            double h = 1.0 / 100;
+            for (int j = 0; j <= 100; j++)
+            {
+                chart_orbits.Series[0].Points.AddXY(x, func(x));
+                x += h;
+            }
+            chart_orbits.Series[1].Points.AddXY(0, 0);
+            chart_orbits.Series[1].Points.AddXY(1, 1);
+        }
+        private void setAxisParams()
         {
             chart_orbits.Series[0].Name = "F(x)";
             chart_orbits.Series[1].Name = "F = x";
@@ -62,28 +76,21 @@ namespace chaos
         private void button1_Click(object sender, EventArgs e)
         {
             setInputParams();
-            setAxis();
+            setAxisParams();
             var map = createBiffurcationMap();
             
             Queue<double> que = new Queue<double>(10);
-            double x_0 = Convert.ToDouble(textBox_startingPoint.Text);
-            
-            
+            double x_0 = inputParams.startingPoint;
+            double itersNum = inputParams.itersNum;
+
+            drowDefaultGraphics(map.nextPoint);
             que.Enqueue(x_0);    
-            double x = 0;
-            double h = 1.0 / 40;
-            for (int j = 0; j < 40; j++)
-            {
-                chart_orbits.Series[0].Points.AddXY(x, map.nextPoint(x));
-                x += h;
-            }
+
             chart_orbits.Series[2].Name = map.mapName;
+            dataGridView_orbitsTable.Rows.Add(0, x_0);
 
             string s1 = $"Рассматривали {map.mapName} при x_0 = {x_0}, k = {map.coefficient}  ";
-            chart_orbits.Series[1].Points.AddXY(0, 0);
-            chart_orbits.Series[1].Points.AddXY(1, 1);
-            
-            dataGridView_orbitsTable.Rows.Add(0, x_0);
+
             bool IsFixed = false;
             chart_orbits.Series[2].Color = Color.Red;
             int i = 1;
@@ -109,6 +116,8 @@ namespace chaos
                 que.Enqueue(x_0);
             }
             if (x_0 == 0) { IsFixed = true; chart_orbits.Series[2].Color = Color.Black; }
+
+
             if (IsFixed)
             {
                 string s2 = $"Точка является периодической с периодом {i}";
