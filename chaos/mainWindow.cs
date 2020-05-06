@@ -16,6 +16,7 @@ namespace chaos
     {
         public int itersNum { set; get; }
         public double startingPoint { set; get; }
+        public double coefficient { set; get; }
     }
     public partial class MainWindow : Form
     {
@@ -25,10 +26,10 @@ namespace chaos
         }
 
         private InputParams inputParams;
-        private BiffurcationMap createBiffurcationMap()
+        private BiffurcationMap createBiffurcationMap(double coef)
         {
             BiffurcationMap map;
-            double coef = Convert.ToDouble(this.textBox_coeff.Text);
+       
             if (rb_IsTent.Checked)
             {
                 return new TentMap(coef);
@@ -72,6 +73,7 @@ namespace chaos
         {
             inputParams.startingPoint = Convert.ToDouble(textBox_startingPoint.Text);
             inputParams.itersNum =  Convert.ToInt32(textBox_maxIter.Text);
+            inputParams.coefficient = Convert.ToDouble(textBox_coeff.Text);
         }
         private void calculateAndDrowMap(BiffurcationMap map)
         {
@@ -126,7 +128,7 @@ namespace chaos
         private void button1_Click(object sender, EventArgs e)
         {
             setInputParams();
-            var map = createBiffurcationMap();
+            var map = createBiffurcationMap(inputParams.coefficient);
             setAxisParams(map);
             drowDefaultGraphics(map.nextPoint);
             calculateAndDrowMap(map);
@@ -180,7 +182,7 @@ namespace chaos
             chart_biffurcation.ChartAreas[0].AxisX.Maximum = coef_end + eps;
             chart_biffurcation.Series[0].Points.ClearQuick();
             chart_biffurcation.Series[0].Points.SuspendUpdates();
-            List<double> check_biff= new List<double>();
+            List<double> check_biff = new List<double>();
             List<double> arr_biff = new List<double>();
             var for_me = new List<int>();
             int check_count = 1;
@@ -220,10 +222,10 @@ namespace chaos
             
             chart_biffurcation.Series[0].Points.ResumeUpdates();
             dataGridView_bifurcationTable.Rows.Clear();
-/*            for(int i = 0; i < arr_biff.Count(); i++)
+            for (int i = 0; i < arr_biff.Count(); i++)
             {
-                dataGridView_bifurcationTable.Rows.Add(i, arr_biff[i],for_me[i]);
-            }*/
+                dataGridView_bifurcationTable.Rows.Add(i, arr_biff[i], for_me[i]);
+            }
         }
 
         private void bindingNavigator1_RefreshItems(object sender, EventArgs e)
