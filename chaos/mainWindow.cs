@@ -57,7 +57,7 @@ namespace chaos
             chart_orbits.Series[1].Points.AddXY(0, 0);
             chart_orbits.Series[1].Points.AddXY(1, 1);
         }
-        private void setAxisParams()
+        private void setAxisParams(BiffurcationMap map)
         {
             chart_orbits.Series[0].Name = "F(x)";
             chart_orbits.Series[1].Name = "F = x";
@@ -73,28 +73,20 @@ namespace chaos
             inputParams.startingPoint = Convert.ToDouble(textBox_startingPoint.Text);
             inputParams.itersNum =  Convert.ToInt32(textBox_maxIter.Text);
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void calculateAndDrowMap(BiffurcationMap map)
         {
-            setInputParams();
-            setAxisParams();
-            var map = createBiffurcationMap();
-            
-            Queue<double> que = new Queue<double>(10);
+            Queue<double> que = new Queue<double>();
             double x_0 = inputParams.startingPoint;
             double itersNum = inputParams.itersNum;
-
-            drowDefaultGraphics(map.nextPoint);
-            que.Enqueue(x_0);    
+            que.Enqueue(x_0);
 
             chart_orbits.Series[2].Name = map.mapName;
             dataGridView_orbitsTable.Rows.Add(0, x_0);
 
-            string s1 = $"Рассматривали {map.mapName} при x_0 = {x_0}, k = {map.coefficient}  ";
-
             bool IsFixed = false;
             chart_orbits.Series[2].Color = Color.Red;
             int i = 1;
-            for (; i < inputParams.itersNum && x_0 != 0; i++)
+            for (; i < itersNum && x_0 != 0; i++)
             {
                 if (IsFixed == true) break;
                 double x_1 = map.nextPoint(x_0);
@@ -117,7 +109,7 @@ namespace chaos
             }
             if (x_0 == 0) { IsFixed = true; chart_orbits.Series[2].Color = Color.Black; }
 
-
+            string s1 = $"Рассматривали {map.mapName} при x_0 = {x_0}, k = {map.coefficient}  ";
             if (IsFixed)
             {
                 string s2 = $"Точка является периодической с периодом {i}";
@@ -130,6 +122,14 @@ namespace chaos
                 Form form = new ResultWindow(s1, s2);
                 form.Show();
             }
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            setInputParams();
+            var map = createBiffurcationMap();
+            setAxisParams(map);
+            drowDefaultGraphics(map.nextPoint);
+            calculateAndDrowMap(map);
         }
 
 
@@ -185,7 +185,6 @@ namespace chaos
             var for_me = new List<int>();
             int check_count = 1;
             var epsilon = 1e-2;
-            bool checker = false;
             for (; coef <= coef_end; coef += h)
             {
                 check_biff.Clear();
@@ -197,7 +196,7 @@ namespace chaos
                 check_biff.Add(x);
                 for (int i = 0; i < N_max; i++)
                 {
-                    checker = false;
+                    bool checker = false;
                     x = next_x.next(flag, coef, x);
                     chart_biffurcation.Series[0].Points.AddXY(coef, x);
                     if (check_biff.Count()<16) foreach(double elem in check_biff)
@@ -219,12 +218,12 @@ namespace chaos
                
             }
             
-             chart_biffurcation.Series[0].Points.ResumeUpdates();
+            chart_biffurcation.Series[0].Points.ResumeUpdates();
             dataGridView_bifurcationTable.Rows.Clear();
-            for(int i = 0; i < arr_biff.Count(); i++)
+/*            for(int i = 0; i < arr_biff.Count(); i++)
             {
                 dataGridView_bifurcationTable.Rows.Add(i, arr_biff[i],for_me[i]);
-            }
+            }*/
         }
 
         private void bindingNavigator1_RefreshItems(object sender, EventArgs e)
