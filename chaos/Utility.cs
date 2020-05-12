@@ -18,4 +18,12 @@ namespace chaos
             Points.ResumeUpdates();
         }
     }
+    public struct InputOrbitsParams
+    {
+        public int itersNum { set; get; }
+        public double startingPoint { set; get; }
+        public double coefficient { set; get; }
+        public double coefficientEnd { set; get; }
+    }
+
 }

@@ -12,9 +12,10 @@ namespace chaos
 {
     public partial class ExceptionWindow : Form
     {
-        public ExceptionWindow()
+        public ExceptionWindow(string errorMessage)
         {
             InitializeComponent();
+            this.label_exception.Text = errorMessage;
         }
     }
 }
