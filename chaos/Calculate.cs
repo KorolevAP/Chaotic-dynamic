@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace chaos
 {
@@ -48,6 +49,7 @@ namespace chaos
             mapName = value;
         }
         public abstract double nextPoint(double point);
+        public abstract double nextRevertingPoint(double point);
     }
 
     public class TentMap : BiffurcationMap
@@ -58,6 +60,7 @@ namespace chaos
             maxCoeffValue = 2;
             coefficient = 0d;
             mapName = "TentMap";
+
         }
 
         public TentMap(double coeff) : base()
@@ -66,6 +69,7 @@ namespace chaos
             maxCoeffValue = 2;
             coefficient = coeff;
             mapName = "TentMap";
+
         }
 
         public override double nextPoint(double point)
@@ -75,6 +79,11 @@ namespace chaos
                 return coefficient * point;
             }
             return -coefficient * point + coefficient;
+        }
+
+        public override double nextRevertingPoint(double point)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -100,6 +109,11 @@ namespace chaos
         {
             return coefficient * point * (1 - point);
         }
+
+        public override double nextRevertingPoint(double point)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class SinMap : BiffurcationMap
@@ -123,5 +137,11 @@ namespace chaos
         {
             return coefficient * Math.Sin(Math.PI * point);
         }
+
+        public override double nextRevertingPoint(double point)
+        {
+            throw new NotImplementedException();
+        }
     }
+
 }
