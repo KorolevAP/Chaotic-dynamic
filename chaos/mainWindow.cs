@@ -150,19 +150,23 @@ namespace chaos
                 form.Show();
             }
         }
-        void CheckInputData()
+        bool IsCorrectInputData()
         {
-            while (CountBrokenInputSymbols() != 0)
+            if (CountBrokenInputSymbols() != 0)
             {
                 var errorMessage = new ExceptionWindow($"\t Ошибка !!! \n Количество недопустимых символов = {CountBrokenInputSymbols()} \n " +
                     $"Входные параметры должны содержать только цифры или запятую");
                 errorMessage.Show();
-                return;
+                return false;
             }
+            return true;
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            CheckInputData();
+            if (!IsCorrectInputData())
+            {
+                return;
+            }
             setInputParamsorbitsDrow();
             var map = createBiffurcationMap(inputParams.coefficient);
             setAxisParams(map);
@@ -197,7 +201,7 @@ namespace chaos
 
         private void button3_Click(object sender, EventArgs e)
         {
-            CheckInputData();
+            IsCorrectInputData();
             setInputParamsBiffMap();
             var flag = 0;
             if (rb_IsTent.Checked)
