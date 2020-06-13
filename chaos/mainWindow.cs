@@ -100,37 +100,38 @@ namespace chaos
         {
             Queue<double> que = new Queue<double>();
             double x_0 = inputParams.startingPoint;
+            var point = x_0;
             double itersNum = inputParams.itersNum;
-            que.Enqueue(x_0);
+            que.Enqueue(point);
 
             chart_orbits.Series[2].Name = map.mapName;
-            dataGridView_orbitsTable.Rows.Add(0, x_0);
+            dataGridView_orbitsTable.Rows.Add(0, point);
 
             bool IsFixed = false;
             chart_orbits.Series[2].Color = Color.Red;
             int i = 1;
-            for (; i < itersNum && x_0 != 0; i++)
+            for (; i < itersNum && point != 0; i++)
             {
                 if (IsFixed == true) break;
-                double x_1 = map.nextPoint(x_0);
-                chart_orbits.Series[2].Points.AddXY(x_0, x_1);
+                double x_1 = map.nextPoint(point);
+                chart_orbits.Series[2].Points.AddXY(point, x_1);
                 chart_orbits.Series[2].Points.AddXY(x_1, x_1);
                 dataGridView_orbitsTable.Rows.Add(i, x_1);
-                x_0 = Math.Round(x_1, 11);
+                point = Math.Round(x_1, 11);
                 if (que.Count > 10000) que.Dequeue();
 
                 foreach (var s in que)
                 {
-                    if (s == x_0)
+                    if (s == point)
                     {
                         IsFixed = true;
                         chart_orbits.Series[2].Color = Color.Black;
                         break;
                     }
                 }
-                que.Enqueue(x_0);
+                que.Enqueue(point);
             }
-            if (x_0 == 0)
+            if (point == 0)
             {
                 IsFixed = true; 
                 chart_orbits.Series[2].Color = Color.Black; 
@@ -150,19 +151,23 @@ namespace chaos
                 form.Show();
             }
         }
-        void CheckInputData()
+        bool IsCorrectInputData()
         {
-            while (CountBrokenInputSymbols() != 0)
+            if (CountBrokenInputSymbols() != 0)
             {
                 var errorMessage = new ExceptionWindow($"\t Ошибка !!! \n Количество недопустимых символов = {CountBrokenInputSymbols()} \n " +
                     $"Входные параметры должны содержать только цифры или запятую");
                 errorMessage.Show();
-                return;
+                return false;
             }
+            return true;
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            CheckInputData();
+            if (!IsCorrectInputData())
+            {
+                return;
+            }
             setInputParamsorbitsDrow();
             var map = createBiffurcationMap(inputParams.coefficient);
             setAxisParams(map);
@@ -197,7 +202,7 @@ namespace chaos
 
         private void button3_Click(object sender, EventArgs e)
         {
-            CheckInputData();
+            IsCorrectInputData();
             setInputParamsBiffMap();
             var flag = 0;
             if (rb_IsTent.Checked)
@@ -215,8 +220,8 @@ namespace chaos
             if (rb_IsSin.Checked)
             {
                 flag = 3;
-                chart_biffurcation.ChartAreas[0].AxisY.Minimum = -4.05;
-                chart_biffurcation.ChartAreas[0].AxisY.Maximum = 4.05;
+                chart_biffurcation.ChartAreas[0].AxisY.Minimum = -(inputParams.coefficientEnd + inputParams.coefficientEnd / 10);
+                chart_biffurcation.ChartAreas[0].AxisY.Maximum = inputParams.coefficientEnd + inputParams.coefficientEnd/10;
             }
             double x_0 = inputParams.startingPoint;
             double coef = inputParams.coefficient;
