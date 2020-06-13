@@ -137,7 +137,7 @@ namespace chaos
                 chart_orbits.Series[2].Color = Color.Black; 
             }
 
-            string s1 = $"Рассматривали {map.mapName} при x_0 = {x_0}, k = {map.coefficient}  ";
+            string s1 = $"Рассматривали {map.mapName} при x_0 = {inputParams.startingPoint}, k = {map.coefficient}  ";
             if (IsFixed)
             {
                 string s2 = $"Точка является периодической с периодом {i}";
