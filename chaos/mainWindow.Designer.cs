@@ -523,6 +523,8 @@
             // 
             // chart_biffurcation
             // 
+            this.chart_biffurcation.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.chart_biffurcation.BorderlineColor = System.Drawing.Color.DeepSkyBlue;
             chartArea2.Name = "ChartArea1";
             this.chart_biffurcation.ChartAreas.Add(chartArea2);
             this.chart_biffurcation.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -534,7 +536,7 @@
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
             series4.Legend = "Legend1";
             series4.MarkerSize = 1;
-            series4.Name = "Series1";
+            series4.Name = "BiffDiagram";
             this.chart_biffurcation.Series.Add(series4);
             this.chart_biffurcation.Size = new System.Drawing.Size(775, 565);
             this.chart_biffurcation.TabIndex = 0;
